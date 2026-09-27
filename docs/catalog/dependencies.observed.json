@@ -1,0 +1,50 @@
+{
+  "record_type": "observed-upstream-baseline",
+  "recorded_on": "2026-09-26",
+  "runtime_lock": false,
+  "integration_status": "not-qualified",
+  "local_catalog_runtime": {
+    "recorded_on": "2026-09-27",
+    "language": "Python",
+    "minimum_version": "3.10",
+    "tested_version": "3.12.3",
+    "tested_environment": "Ubuntu 24.04 (WSL)",
+    "third_party_packages": [],
+    "scope": "Local catalog commands only; upstream integration qualification unchanged"
+  },
+  "dependencies": [
+    {
+      "id": "tiangong-ai-cli",
+      "repository": "https://github.com/tiangong-ai/cli-toolkit",
+      "observed_commit": "fee12538aca7bc35f8dfb0da3bbd7d5836a61124",
+      "package": "@tiangong-ai/cli",
+      "observed_package_version": "0.0.63",
+      "evidence": "README and package metadata inspection only",
+      "qualified_operations": []
+    },
+    {
+      "id": "tiangong-ai-skills",
+      "repository": "https://github.com/tiangong-ai/agent-skills",
+      "observed_commit": "5e692461708a4e02c1012086a59d2bd75da99673",
+      "evidence": "README and repository metadata inspection only",
+      "qualified_operations": []
+    },
+    {
+      "id": "tiangong-lca-cli",
+      "repository": "https://github.com/tiangong-lca/cli",
+      "observed_commit": "ba286d42db5a48f8b70fd649162fb45586e7cfa2",
+      "package": "@tiangong-lca/cli",
+      "observed_package_version": "0.1.22",
+      "evidence": "Prior bounded local checks in the HTAM workspace; integration with the current project not exercised",
+      "qualified_operations": []
+    },
+    {
+      "id": "tiangong-lca-skills",
+      "repository": "https://github.com/tiangong-lca/agent-skills",
+      "observed_commit": "5cfd434bd1edcec52f819eeddd22a912932611ee",
+      "observed_wrapper_cli_version": "0.1.20",
+      "evidence": "Pinned README; Foundry entry uses its own separate dependency lock",
+      "qualified_operations": []
+    }
+  ]
+}

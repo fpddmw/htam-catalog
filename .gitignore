@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+/build/
+/dist/
+.pytest_cache/
+.env
+.env.*
+!.env.example
+
+# Local research materials, datasets, execution records and archives
+/data/
+/db/
+/handoff/
+/outputs/
+/sources/
+/Microsoft.PowerShell.Core/
+/research-plan.md
+
+# Publish the catalog development documents and entry points only
+/docs/*
+!/docs/catalog/
+/scripts/*
+!/scripts/catalog.py
+!/scripts/demo_catalog.py

@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "module_id": "demo-sensitive-receiver",
+  "revision": 1,
+  "sources": [
+    {
+      "id": "synthetic-example",
+      "kind": "synthetic",
+      "citation": "构造的软件行为样例；名称、数值及组合均不代表真实工艺证据。"
+    }
+  ],
+  "extracted": {
+    "origin": "synthetic",
+    "source_ids": [
+      "synthetic-example"
+    ],
+    "data": {
+      "name": "构造低含水率接收模块",
+      "summary": "仅用于验证目录与接口操作的构造模块。",
+      "aliases": [],
+      "categories": [],
+      "functions": [
+        "矿物原料接收"
+      ],
+      "industries": [],
+      "interfaces": [
+        {
+          "id": "feed",
+          "direction": "input",
+          "kind": "material",
+          "terms": [
+            "矿物固体"
+          ],
+          "requirements": [
+            {
+              "key": "moisture",
+              "value": 5,
+              "unit": "%",
+              "basis": "wet-mass",
+              "op": "le"
+            }
+          ]
+        }
+      ],
+      "representations": [
+        {
+          "id": "whole",
+          "kind": "whole"
+        }
+      ],
+      "external_refs": [],
+      "unknowns": []
+    }
+  },
+  "local": {
+    "origin": "hypothesis",
+    "source_ids": [],
+    "data": {}
+  }
+}

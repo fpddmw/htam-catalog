@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "htam-catalog"
+version = "0.1.0"
+description = "Local recursive industrial-process catalog for HTAM"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+htam-catalog = "htam_catalog.catalog:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

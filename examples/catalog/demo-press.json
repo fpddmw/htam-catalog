@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "module_id": "demo-press",
+  "revision": 1,
+  "sources": [
+    {
+      "id": "synthetic-example",
+      "kind": "synthetic",
+      "citation": "构造的软件行为样例；名称、数值及组合均不代表真实工艺证据。"
+    }
+  ],
+  "extracted": {
+    "origin": "synthetic",
+    "source_ids": [
+      "synthetic-example"
+    ],
+    "data": {
+      "name": "构造压滤模块",
+      "summary": "仅用于验证目录与接口操作的构造模块。",
+      "aliases": [],
+      "categories": [
+        "机械脱水"
+      ],
+      "functions": [
+        "固液分离",
+        "降低含水率"
+      ],
+      "industries": [
+        "矿物处理"
+      ],
+      "interfaces": [
+        {
+          "id": "feed",
+          "direction": "input",
+          "kind": "material",
+          "terms": [
+            "湿态残渣"
+          ]
+        },
+        {
+          "id": "cake",
+          "direction": "output",
+          "kind": "material",
+          "terms": [
+            "湿滤饼"
+          ],
+          "properties": [
+            {
+              "key": "moisture",
+              "value": 40,
+              "unit": "%",
+              "basis": "wet-mass"
+            }
+          ]
+        },
+        {
+          "id": "water",
+          "direction": "output",
+          "kind": "material",
+          "terms": [
+            "滤液"
+          ]
+        }
+      ],
+      "representations": [
+        {
+          "id": "whole",
+          "kind": "whole"
+        }
+      ],
+      "external_refs": [],
+      "unknowns": []
+    }
+  },
+  "local": {
+    "origin": "hypothesis",
+    "source_ids": [],
+    "data": {}
+  }
+}

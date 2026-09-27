@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "module_id": "demo-heat-recovery",
+  "revision": 1,
+  "sources": [
+    {
+      "id": "synthetic-example",
+      "kind": "synthetic",
+      "citation": "构造的软件行为样例；名称、数值及组合均不代表真实工艺证据。"
+    }
+  ],
+  "extracted": {
+    "origin": "synthetic",
+    "source_ids": [
+      "synthetic-example"
+    ],
+    "data": {
+      "name": "构造余热回收模块",
+      "summary": "仅用于验证目录与接口操作的构造模块。",
+      "aliases": [],
+      "categories": [
+        "公用工程"
+      ],
+      "functions": [
+        "供热",
+        "余热回收"
+      ],
+      "industries": [
+        "能源"
+      ],
+      "interfaces": [
+        {
+          "id": "hot-stream",
+          "direction": "input",
+          "kind": "energy",
+          "terms": [
+            "高温介质"
+          ]
+        },
+        {
+          "id": "heat",
+          "direction": "output",
+          "kind": "energy",
+          "terms": [
+            "热量"
+          ],
+          "unknowns": [
+            "供热温度尚未给出"
+          ]
+        }
+      ],
+      "representations": [
+        {
+          "id": "whole",
+          "kind": "whole"
+        }
+      ],
+      "external_refs": [],
+      "unknowns": []
+    }
+  },
+  "local": {
+    "origin": "hypothesis",
+    "source_ids": [],
+    "data": {}
+  }
+}

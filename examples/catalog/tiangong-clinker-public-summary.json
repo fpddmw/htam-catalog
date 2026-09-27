@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "module_id": "tiangong-clinker-public-summary",
+  "revision": 1,
+  "sources": [
+    {
+      "id": "portal-20260927",
+      "kind": "database",
+      "citation": "天工公开过程页：clinker production; clinker, high-sulfur circulating fluidized bed reduction decomposition of phosphogypsum, phosphogypsum",
+      "uri": "https://www.tiangong.earth/en/process/31fc8562-879c-4462-985f-cc6550752f14%4001.01.000",
+      "locator": "公开页面标题；只核实过程身份和名称",
+      "retrieved_at": "2026-09-26T16:43:18.388896+00:00",
+      "sha256": "6cc7a6cfc55fdc0607988951a60493cc7a02689749ced504735ff2c0acdfbe83"
+    }
+  ],
+  "extracted": {
+    "origin": "source_extraction",
+    "source_ids": [
+      "portal-20260927"
+    ],
+    "data": {
+      "name": "磷石膏循环流化床还原分解相关熟料过程（公开名称摘要）",
+      "summary": "仅记录已读取公开页面中的身份与技术名称，未提取完整清单或工况。",
+      "aliases": [
+        "clinker production",
+        "phosphogypsum",
+        "circulating fluidized bed"
+      ],
+      "categories": [],
+      "functions": [],
+      "industries": [],
+      "interfaces": [],
+      "representations": [
+        {
+          "id": "whole",
+          "kind": "whole"
+        }
+      ],
+      "external_refs": [
+        {
+          "provider": "tiangong-lca",
+          "id": "31fc8562-879c-4462-985f-cc6550752f14",
+          "requested_version": "01.01.000",
+          "resolved_version": "01.01.000",
+          "relation": "partial",
+          "scope": "公开页面身份及名称摘要；接口、清单和工况待取得详细记录后补充",
+          "uri": "https://www.tiangong.earth/en/process/31fc8562-879c-4462-985f-cc6550752f14%4001.01.000"
+        }
+      ],
+      "unknowns": [
+        "输入输出清单尚未取得",
+        "工况、参数与内部工序尚未核实"
+      ]
+    }
+  },
+  "local": {
+    "origin": "hypothesis",
+    "source_ids": [],
+    "data": {}
+  }
+}
