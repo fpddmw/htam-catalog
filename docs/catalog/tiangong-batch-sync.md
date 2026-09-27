@@ -22,13 +22,18 @@ DB=outputs/tiangong-sync/catalog.sqlite
 
 python3 scripts/tiangong_sync.py --db "$DB" sync --kind flow --cli node "$CLI_JS" --page-size 100
 python3 scripts/tiangong_sync.py --db "$DB" sync --kind process --cli node "$CLI_JS" --page-size 100
+python3 scripts/tiangong_sync.py --db "$DB" sync-flow-refs --cli node "$CLI_JS" --batch-size 40
 python3 scripts/tiangong_sync.py --db "$DB" status
 python3 scripts/tiangong_sync.py --db "$DB" failures
+python3 scripts/tiangong_sync.py --db "$DB" issues
 python3 scripts/tiangong_sync.py --db "$DB" search '污泥'
+python3 scripts/tiangong_sync.py --db "$DB" query --industry-code 24 --location CN
 python3 scripts/tiangong_sync.py --db "$DB" matches --process-id PROCESS_UUID --version 00.00.001
 ```
 
-默认读取 `state_code=100`。可以重复传 `--state-code` 设置其它可访问状态。`--max-pages 1` 可先试一页；继续时添加 `--resume`，保持原页大小和状态筛选。正常重跑从第一页开始，通过 ID、版本和散列更新变化记录。单条错误保存至失败表，可用 `failures` 查看记录身份和原因，其他记录继续导入；整个分页命令失败时保留下一页的偏移供恢复。
+默认读取 `state_code=100`。可以重复传 `--state-code` 设置其它可访问状态。`--max-pages 1` 可先试一页；继续时添加 `--resume`，保持原页大小和状态筛选。正常重跑从第一页开始，通过 ID、版本和散列更新变化记录。整条记录无法解析时进入失败表，可用 `failures` 查看原因，再用 `retry-failures --kind process --cli node "$CLI_JS"` 按 ID 重取。个别交换字段缺失时保留其余过程投影，并用 `issues` 查看跳过项。整个分页命令失败时保留下一页的偏移供恢复。
+
+如果主要目标是补齐已导入过程所引用的流，可直接运行 `sync-flow-refs`，它从交换索引提取缺失的流 ID，按 ID 批量调用天工 `flow list`，记录已找到与未找到的引用；无需先同步天工的全部流。`--max-batches 1` 可先试一批，重跑继续未处理的 ID；`--retry-unresolved` 重新检查已有查询结果。完整流目录仍可用 `sync --kind flow` 单独同步。
 
 离线样本可以直接导入：
 
@@ -37,8 +42,8 @@ python3 scripts/tiangong_sync.py --db "$DB" import-file --kind process --file /p
 python3 scripts/tiangong_sync.py --db "$DB" import-file --kind flow --file /path/to/flow.json
 ```
 
-`search` 查过程名称、行业分类、工艺描述、已知流名称或流 ID。`status` 报告缺少参考交换、行业分类、工艺描述、确切流记录和流类型的数量。`matches` 找同一流 ID 的输出与输入；只有双方流版本一致且流类型为产品流或废物流时标为 `shared_technosphere_flow`。基本流标为 `environmental_exchange`；缺少流类型或版本时分别标为 `flow_type_unresolved`、`version_unresolved`。这些只是**索引层的连接线索**，后续仍要核对单位、物理状态、浓度、地区、时间、容量和过程边界。
+`search` 查过程名称、行业分类、工艺描述、已知流名称或流 ID。`query` 可组合过程名称、行业代码、地区、过程类型、年份及精确的输入/输出流 ID，并用 `--limit`、`--offset` 分页。`status` 报告跳过的交换、缺少参考交换、行业分类、工艺描述、确切流记录和流类型的数量。`matches` 找同一流 ID 的输出与输入；只有双方流版本一致且流类型为产品流或废物流时标为 `shared_technosphere_flow`。基本流标为 `environmental_exchange`；缺少流类型或版本时分别标为 `flow_type_unresolved`、`version_unresolved`。这些只是**索引层的连接线索**，后续仍要核对单位、物理状态、浓度、地区、时间、容量和过程边界。
 
 ## 已验证与待验证
 
-本地测试覆盖分页恢复、重复导入、同版本变更、坏行隔离、字段提取、检索和连接分类；另用已有 TIDAS 过程样本完成离线导入。真实账号的在线读取、返回格式差异、速度、权限范围和数据总量仍须登录后实测。CLI 目前采用按 `id,version` 排序的 offset 分页；远端集合在长时间同步中变动时可能使页边界移动，首次大批量运行后应再从头同步并比对数量，后续考虑按身份游标或服务端快照。数据库升级目前只对首批新增过程字段作了迁移，正式部署前需要按真实数据确定持续迁移策略。
+本地测试覆盖分页恢复、重复导入、同版本变更、坏行隔离、字段提取、格式迁移、检索和连接分类；另用已有 TIDAS 过程样本完成离线导入。真实账号已验证已发布过程的完整分页及按引用批量查询流，发现整数形式参考年份、个别缺少流 ID 的交换以及过程引用的流版本不可访问等实际差异，并已据此调整提取与诊断。实际运行数据库保存在项目的忽略目录 `outputs/`，不会随公开代码仓库发布。CLI 目前采用按 `id,version` 排序的 offset 分页；远端集合在长时间同步中变动时可能使页边界移动，首次大批量运行后应再从头同步并比对数量，后续考虑按身份游标或服务端快照。正式部署前还需持续检验远端变更频率、数据库迁移和大规模查询性能。

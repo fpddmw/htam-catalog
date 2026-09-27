@@ -6,12 +6,13 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 import sqlite3
 import subprocess
 import sys
 
 
-PROJECTION_VERSION = 2
+PROJECTION_VERSION = 3
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS processes (
@@ -54,6 +55,14 @@ CREATE TABLE IF NOT EXISTS source_changes (
   changed_at TEXT NOT NULL, source_locator TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS source_changes_identity ON source_changes(kind,id,version);
+CREATE TABLE IF NOT EXISTS flow_lookup_queue (
+  flow_id TEXT PRIMARY KEY, status TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS projection_issues (
+  kind TEXT NOT NULL, source_id TEXT NOT NULL, version TEXT NOT NULL,
+  field_path TEXT NOT NULL, reason TEXT NOT NULL, observed_at TEXT NOT NULL,
+  PRIMARY KEY (kind, source_id, version, field_path)
+);
 """
 
 
@@ -133,7 +142,8 @@ def process_projection(data):
     reference = references[0] if len(references) == 1 else None
     process_info = nested(data, "processInformation")
     location = text_value(nested(process_info, "geography", "locationOfOperationSupplyOrProduction", "@location"))
-    year = text_value(nested(process_info, "time", "common:referenceYear"))
+    raw_year = nested(process_info, "time", "common:referenceYear")
+    year = str(raw_year) if type(raw_year) is int else text_value(raw_year)
     classes = nested(process_info, "dataSetInformation", "classificationInformation",
                      "common:classification", "common:class")
     if isinstance(classes, dict):
@@ -149,28 +159,32 @@ def process_projection(data):
     if not isinstance(raw_exchanges, list):
         raise IngestError("exchanges.exchange: expected list or object")
     exchanges = []
+    issues = []
     seen = set()
     for number, raw in enumerate(raw_exchanges):
         place = f"exchanges.exchange[{number}]"
-        internal_id = field(raw, "@dataSetInternalID", place)
-        if internal_id in seen:
-            raise IngestError(f"{place}: duplicate internal ID {internal_id}")
-        seen.add(internal_id)
-        direction = field(raw, "exchangeDirection", place)
-        if direction not in ("Input", "Output"):
-            raise IngestError(f"{place}.exchangeDirection: unsupported {direction}")
-        flow_ref = obj(raw.get("referenceToFlowDataSet"), f"{place}.referenceToFlowDataSet")
-        flow_id = field(flow_ref, "@refObjectId", f"{place}.referenceToFlowDataSet")
-        flow_version = text_value(flow_ref.get("@version"))
-        mean_amount = raw.get("meanAmount")
-        resulting_amount = raw.get("resultingAmount")
-        exchanges.append((source_id, version, internal_id, direction, flow_id,
-                          flow_version,
-                          str(mean_amount) if mean_amount is not None else None,
-                          str(resulting_amount) if resulting_amount is not None else None,
-                          int(internal_id in references)))
+        try:
+            internal_id = field(raw, "@dataSetInternalID", place)
+            if internal_id in seen:
+                raise IngestError(f"{place}: duplicate internal ID {internal_id}")
+            seen.add(internal_id)
+            direction = field(raw, "exchangeDirection", place)
+            if direction not in ("Input", "Output"):
+                raise IngestError(f"{place}.exchangeDirection: unsupported {direction}")
+            flow_ref = obj(raw.get("referenceToFlowDataSet"), f"{place}.referenceToFlowDataSet")
+            flow_id = field(flow_ref, "@refObjectId", f"{place}.referenceToFlowDataSet")
+            flow_version = text_value(flow_ref.get("@version"))
+            mean_amount = raw.get("meanAmount")
+            resulting_amount = raw.get("resultingAmount")
+            exchanges.append((source_id, version, internal_id, direction, flow_id,
+                              flow_version,
+                              str(mean_amount) if mean_amount is not None else None,
+                              str(resulting_amount) if resulting_amount is not None else None,
+                              int(internal_id in references)))
+        except (IngestError, AttributeError) as exc:
+            issues.append(("process", source_id, version, place, str(exc), now()))
     facets = (location, year, industry, industry_code, technology)
-    return source_id, version, name, text_value(process_type), reference, facets, exchanges
+    return source_id, version, name, text_value(process_type), reference, facets, exchanges, issues
 
 
 def flow_projection(data):
@@ -198,6 +212,9 @@ def open_db(path):
             db.execute(f"ALTER TABLE processes ADD COLUMN {column} TEXT")
     if "projection_version" not in existing:
         db.execute("ALTER TABLE processes ADD COLUMN projection_version INTEGER NOT NULL DEFAULT 1")
+    db.execute("CREATE INDEX IF NOT EXISTS processes_industry ON processes(industry_code)")
+    db.execute("CREATE INDEX IF NOT EXISTS processes_location ON processes(location)")
+    db.execute("CREATE INDEX IF NOT EXISTS processes_type ON processes(process_type)")
     return db
 
 
@@ -208,7 +225,7 @@ def ingest_row(db, kind, row, locator):
     payload = row.get(kind) if isinstance(row, dict) and kind in row else row
     data = dataset(payload, kind)
     if kind == "process":
-        source_id, version, name, data_type, reference, facets, exchanges = process_projection(data)
+        source_id, version, name, data_type, reference, facets, exchanges, issues = process_projection(data)
     else:
         source_id, version, name, data_type = flow_projection(data)
     if isinstance(row, dict):
@@ -243,6 +260,9 @@ def ingest_row(db, kind, row, locator):
         if status != "unchanged":
             db.execute("DELETE FROM exchanges WHERE process_id=? AND process_version=?", (source_id, version))
             db.executemany("INSERT INTO exchanges VALUES (?,?,?,?,?,?,?,?,?)", exchanges)
+            db.execute("DELETE FROM projection_issues WHERE kind='process' AND source_id=? AND version=?",
+                       (source_id, version))
+            db.executemany("INSERT INTO projection_issues VALUES (?,?,?,?,?,?)", issues)
     else:
         db.execute("""INSERT INTO flows VALUES (?,?,?,?,?,?,?,?,?)
           ON CONFLICT(id,version) DO UPDATE SET content_hash=excluded.content_hash,
@@ -294,7 +314,10 @@ def cli_page(cli, kind, state_codes, page_size, offset):
     for code in state_codes:
         command += ["--state-code", str(code)]
     command += ["--limit", str(page_size), "--offset", str(offset), "--json"]
-    result = subprocess.run(command, capture_output=True, text=True, timeout=120, check=False)
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120, check=False)
+    except subprocess.TimeoutExpired as exc:
+        raise IngestError(f"TianGong CLI {kind} list timed out") from exc
     if result.returncode:
         raise IngestError(f"TianGong CLI {kind} list failed (exit {result.returncode}); check auth status locally")
     try:
@@ -305,6 +328,90 @@ def cli_page(cli, kind, state_codes, page_size, offset):
     if not isinstance(payload, dict) or payload.get("status") != expected or not isinstance(payload.get("rows"), list):
         raise IngestError("TianGong CLI list response shape changed")
     return payload["rows"]
+
+
+def cli_ids(cli, kind, ids, page_size=100):
+    if kind not in ("process", "flow") or not ids:
+        raise IngestError("ID lookup requires a source kind and at least one ID")
+    command = [*cli, kind, "list"]
+    for source_id in ids:
+        command += ["--id", source_id]
+    command += ["--state-code", "100", "--all", "--page-size", str(page_size), "--json"]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120, check=False)
+    except subprocess.TimeoutExpired as exc:
+        raise IngestError(f"TianGong CLI {kind} list by ID timed out") from exc
+    if result.returncode:
+        raise IngestError(f"TianGong CLI {kind} list by ID failed (exit {result.returncode})")
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise IngestError(f"TianGong CLI returned invalid {kind}-list JSON") from exc
+    expected = "listed_remote_processes" if kind == "process" else "listed_remote_flows"
+    if not isinstance(payload, dict) or payload.get("status") != expected or not isinstance(payload.get("rows"), list):
+        raise IngestError(f"TianGong CLI {kind}-list response shape changed")
+    return payload["rows"]
+
+
+def cli_flow_ids(cli, ids, page_size=100):
+    return cli_ids(cli, "flow", ids, page_size)
+
+
+def retry_failed_rows(db, kind, cli, batch_size=40, max_batches=None):
+    if kind not in ("process", "flow") or batch_size < 1:
+        raise IngestError("invalid failure retry kind or batch size")
+    locators = [row[0] for row in db.execute(
+        "SELECT source_locator FROM ingest_failures WHERE kind=? ORDER BY source_locator", (kind,))]
+    ids = sorted({match.group(1) for locator in locators
+                  if (match := re.search(r"#id=([^@#]+)@", locator))})
+    totals = {"requested_ids": 0, "inserted": 0, "updated": 0, "unchanged": 0, "failed": 0}
+    for start in range(0, len(ids), batch_size):
+        if max_batches is not None and start // batch_size >= max_batches:
+            break
+        batch = ids[start:start + batch_size]
+        rows = cli_ids(cli, kind, batch)
+        counts = ingest_page(db, kind, rows, f"tiangong:{kind}:100")
+        totals["requested_ids"] += len(batch)
+        for key, value in counts.items():
+            totals[key] += value
+    totals["remaining_failures"] = db.execute(
+        "SELECT COUNT(*) FROM ingest_failures WHERE kind=?", (kind,)).fetchone()[0]
+    return totals
+
+
+def sync_flow_references(db, cli, batch_size=40, max_batches=None, retry_unresolved=False):
+    if batch_size < 1 or max_batches is not None and max_batches < 1:
+        raise IngestError("invalid reference-sync batch size or limit")
+    with db:
+        db.execute("""DELETE FROM flow_lookup_queue WHERE flow_id NOT IN
+          (SELECT DISTINCT flow_id FROM exchanges)""")
+        db.execute("""INSERT OR IGNORE INTO flow_lookup_queue(flow_id,status,updated_at)
+          SELECT DISTINCT e.flow_id,'pending',? FROM exchanges e
+          WHERE NOT EXISTS (SELECT 1 FROM flows f WHERE f.id=e.flow_id
+          AND f.version=e.flow_version)""", (now(),))
+        if retry_unresolved:
+            db.execute("UPDATE flow_lookup_queue SET status='pending',updated_at=? WHERE status<>'pending'", (now(),))
+    totals = {"batches": 0, "requested_ids": 0, "inserted": 0,
+              "updated": 0, "unchanged": 0, "failed": 0}
+    while True:
+        ids = [row[0] for row in db.execute("""SELECT flow_id FROM flow_lookup_queue
+          WHERE status='pending' ORDER BY flow_id LIMIT ?""", (batch_size,))]
+        if not ids or max_batches is not None and totals["batches"] >= max_batches:
+            break
+        rows = cli_flow_ids(cli, ids)
+        counts = ingest_page(db, "flow", rows, "tiangong:flow:references")
+        with db:
+            for flow_id in ids:
+                found = db.execute("SELECT 1 FROM flows WHERE id=? LIMIT 1", (flow_id,)).fetchone()
+                db.execute("UPDATE flow_lookup_queue SET status=?,updated_at=? WHERE flow_id=?",
+                           ("found" if found else "not_found_or_invalid", now(), flow_id))
+        totals["batches"] += 1
+        totals["requested_ids"] += len(ids)
+        for key, value in counts.items():
+            totals[key] += value
+    totals["pending_ids"] = db.execute(
+        "SELECT COUNT(*) FROM flow_lookup_queue WHERE status='pending'").fetchone()[0]
+    return totals
 
 
 def sync_cli(db, kind, cli, state_codes=(100,), page_size=100, resume=False, max_pages=None):
@@ -322,7 +429,7 @@ def sync_cli(db, kind, cli, state_codes=(100,), page_size=100, resume=False, max
                        (kind, scope, page_size, offset, "running", now()))
         try:
             rows = cli_page(cli, kind, state_codes, page_size, offset)
-        except (IngestError, subprocess.TimeoutExpired):
+        except IngestError:
             with db:
                 db.execute("UPDATE sync_jobs SET status=?,updated_at=? WHERE kind=? AND scope=?",
                            ("failed", now(), kind, scope))
@@ -354,6 +461,34 @@ def search(db, term, limit=20):
         AND f.version=COALESCE(e.flow_version,f.version) WHERE e.process_id=p.id
         AND e.process_version=p.version AND (f.name LIKE ? ESCAPE '\\' OR e.flow_id=?))
       ORDER BY p.name,p.id,p.version LIMIT ?""", (pattern, pattern, term, pattern, pattern, term, limit))]
+
+
+def query_processes(db, *, name=None, industry_code=None, location=None, process_type=None,
+                    reference_year=None, input_flow=None, output_flow=None, limit=20, offset=0):
+    if limit < 1 or offset < 0:
+        raise IngestError("query limit must be positive and offset non-negative")
+    clauses, values = [], []
+    exact = {"industry_code": industry_code, "location": location,
+             "process_type": process_type, "reference_year": reference_year}
+    for column, value in exact.items():
+        if value is not None:
+            clauses.append(f"p.{column}=?")
+            values.append(value)
+    if name is not None:
+        clauses.append("p.name LIKE ? ESCAPE '\\'")
+        values.append("%" + name.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%")
+    for direction, flow_id in (("Input", input_flow), ("Output", output_flow)):
+        if flow_id is not None:
+            clauses.append("""EXISTS (SELECT 1 FROM exchanges e WHERE e.process_id=p.id
+              AND e.process_version=p.version AND e.direction=? AND e.flow_id=?)""")
+            values += [direction, flow_id]
+    where = " WHERE " + " AND ".join(clauses) if clauses else ""
+    sql = """SELECT p.id,p.version,p.name,p.process_type,p.industry_class,p.industry_code,
+      p.location,p.reference_year,p.source_locator,
+      EXISTS(SELECT 1 FROM projection_issues i WHERE i.kind='process'
+        AND i.source_id=p.id AND i.version=p.version) AS has_projection_issues
+      FROM processes p""" + where + " ORDER BY p.name,p.id,p.version LIMIT ? OFFSET ?"
+    return [dict(row) for row in db.execute(sql, (*values, limit, offset))]
 
 
 def matching_connections(db, process_id, version, limit=100):
@@ -390,6 +525,8 @@ def status_report(db):
     counts = {table: db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
               for table in ("processes", "flows", "exchanges", "ingest_failures", "source_changes")}
     counts["quality"] = {
+        "skipped_exchange_items": db.execute(
+            "SELECT COUNT(*) FROM projection_issues WHERE kind='process'").fetchone()[0],
         "processes_without_reference_exchange": db.execute("""SELECT COUNT(*) FROM processes p
           WHERE NOT EXISTS (SELECT 1 FROM exchanges e WHERE e.process_id=p.id
           AND e.process_version=p.version AND e.is_reference=1)""").fetchone()[0],
@@ -403,7 +540,19 @@ def status_report(db):
         "flows_without_type": db.execute(
             "SELECT COUNT(*) FROM flows WHERE flow_type IS NULL").fetchone()[0],
     }
+    unresolved = {"unversioned_flow_reference": 0, "flow_id_absent": 0,
+                  "requested_flow_version_absent": 0}
+    for category, number in db.execute("""SELECT category,COUNT(*) FROM (
+      SELECT CASE WHEN e.flow_version IS NULL THEN 'unversioned_flow_reference'
+        WHEN NOT EXISTS (SELECT 1 FROM flows f WHERE f.id=e.flow_id) THEN 'flow_id_absent'
+        ELSE 'requested_flow_version_absent' END AS category
+      FROM exchanges e WHERE NOT EXISTS (SELECT 1 FROM flows f WHERE f.id=e.flow_id
+        AND f.version=e.flow_version)) GROUP BY category"""):
+        unresolved[category] = number
+    counts["quality"].update(unresolved)
     counts["jobs"] = [dict(row) for row in db.execute("SELECT * FROM sync_jobs ORDER BY kind,scope")]
+    counts["flow_lookup_queue"] = {row[0]: row[1] for row in db.execute(
+        "SELECT status,COUNT(*) FROM flow_lookup_queue GROUP BY status ORDER BY status")}
     return counts
 
 
@@ -421,15 +570,37 @@ def main(argv=None):
     sync_parser.add_argument("--page-size", type=int, default=100)
     sync_parser.add_argument("--resume", action="store_true")
     sync_parser.add_argument("--max-pages", type=int)
+    refs_parser = sub.add_parser("sync-flow-refs", help="Fetch only flows referenced by local processes")
+    refs_parser.add_argument("--cli", nargs="+", default=["tiangong-lca"])
+    refs_parser.add_argument("--batch-size", type=int, default=40)
+    refs_parser.add_argument("--max-batches", type=int)
+    refs_parser.add_argument("--retry-unresolved", action="store_true")
+    retry_parser = sub.add_parser("retry-failures", help="Refetch failed source IDs")
+    retry_parser.add_argument("--kind", choices=("process", "flow"), required=True)
+    retry_parser.add_argument("--cli", nargs="+", default=["tiangong-lca"])
+    retry_parser.add_argument("--batch-size", type=int, default=40)
+    retry_parser.add_argument("--max-batches", type=int)
     search_parser = sub.add_parser("search", help="Search names and known flow references")
     search_parser.add_argument("term")
     search_parser.add_argument("--limit", type=int, default=20)
+    query_parser = sub.add_parser("query", help="Filter processes by source fields and exact flow IDs")
+    query_parser.add_argument("--name")
+    query_parser.add_argument("--industry-code")
+    query_parser.add_argument("--location")
+    query_parser.add_argument("--process-type")
+    query_parser.add_argument("--reference-year")
+    query_parser.add_argument("--input-flow")
+    query_parser.add_argument("--output-flow")
+    query_parser.add_argument("--limit", type=int, default=20)
+    query_parser.add_argument("--offset", type=int, default=0)
     match_parser = sub.add_parser("matches", help="Find exact-flow output-to-input connections")
     match_parser.add_argument("--process-id", required=True)
     match_parser.add_argument("--version", required=True)
     match_parser.add_argument("--limit", type=int, default=100)
     failures_parser = sub.add_parser("failures", help="Inspect failed source records for retry")
     failures_parser.add_argument("--limit", type=int, default=100)
+    issues_parser = sub.add_parser("issues", help="Inspect skipped source fields")
+    issues_parser.add_argument("--limit", type=int, default=100)
     sub.add_parser("status", help="Show local projection counts and failed records")
     args = parser.parse_args(argv)
     try:
@@ -439,13 +610,27 @@ def main(argv=None):
             elif args.command == "sync":
                 result = sync_cli(db, args.kind, args.cli, args.state_code or [100],
                                   args.page_size, args.resume, args.max_pages)
+            elif args.command == "sync-flow-refs":
+                result = sync_flow_references(db, args.cli, args.batch_size,
+                                              args.max_batches, args.retry_unresolved)
+            elif args.command == "retry-failures":
+                result = retry_failed_rows(db, args.kind, args.cli,
+                                           args.batch_size, args.max_batches)
             elif args.command == "search":
                 result = search(db, args.term, args.limit)
+            elif args.command == "query":
+                result = query_processes(db, name=args.name, industry_code=args.industry_code,
+                                         location=args.location, process_type=args.process_type,
+                                         reference_year=args.reference_year, input_flow=args.input_flow,
+                                         output_flow=args.output_flow, limit=args.limit, offset=args.offset)
             elif args.command == "matches":
                 result = matching_connections(db, args.process_id, args.version, args.limit)
             elif args.command == "failures":
                 result = [dict(row) for row in db.execute("""SELECT kind,source_locator,reason,occurred_at
                   FROM ingest_failures ORDER BY occurred_at DESC LIMIT ?""", (args.limit,))]
+            elif args.command == "issues":
+                result = [dict(row) for row in db.execute("""SELECT kind,source_id,version,field_path,reason,observed_at
+                  FROM projection_issues ORDER BY observed_at DESC LIMIT ?""", (args.limit,))]
             else:
                 result = status_report(db)
         print(json.dumps(result, ensure_ascii=False, indent=2))
