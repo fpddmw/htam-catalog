@@ -4,7 +4,7 @@
 
 当前版本实现本地目录操作，采用普通 Python 项目结构，运行时仅依赖标准库，无需 AI 或在线服务。
 
-**当前建设重点是批量数据流水线**：从可访问的天工过程、流和单位记录自动提取工艺信息，持续同步、建立索引，并提供可追溯的查询与潜在连接匹配。现有卡片和模型检查工具是这条流水线的起点；批量导入及增量同步尚未实现。阶段安排见[建设计划](docs/catalog/implementation-plan.md)。
+**当前建设重点是批量数据流水线**：从可访问的天工过程和流记录自动提取工艺信息，持续同步、建立索引，并提供可追溯的查询与潜在连接匹配。第一版已支持天工 CLI 只读分页、离线导入、增量更新、断点恢复和本地检索；真实账号的批量验证仍待完成。使用方法见[批量同步](docs/catalog/tiangong-batch-sync.md)，阶段安排见[建设计划](docs/catalog/implementation-plan.md)。
 
 ## 已有功能
 
@@ -14,6 +14,7 @@
 - 固定子模块修订及表达的递归展开、实例路径、边界映射与包含环诊断。
 - 接口候选检索及已声明标量条件检查，返回满足、不满足或未知。
 - 天工原生生命周期模型 JSON 的只读结构检查，提取过程实例、版本、倍率和连接。
+- 天工过程与流的批量同步、工艺字段投影、SQLite 索引、来源与失败记录、初步流身份连接查询。
 
 当前参数可作为数据记录；参数公式求值、完整方案编辑、自动多步重组和在线 LCA 计算仍待开发。候选结果的适用范围取决于已记录的条件与来源。
 
@@ -39,6 +40,7 @@ python3 scripts/catalog.py inspect-tiangong-model --file examples/tiangong/synth
 src/htam_catalog/       核心实现与 Python API
 scripts/catalog.py     从源码直接运行的命令入口
 scripts/demo_catalog.py 样例导入与演示
+scripts/tiangong_sync.py 天工批量同步与检索
 examples/catalog/      带来源和证据状态的样例卡片
 examples/tiangong/     原生模型结构的构造样例
 tests/                 行为测试
@@ -54,7 +56,7 @@ pyproject.toml         Python 包元数据
 python3 -m unittest discover -s tests -v
 ```
 
-当前 21 项行为测试覆盖修订冲突、完整性、来源刷新、索引恢复、递归引用、条件未知、天工模型结构检查及异地运行。实际验证环境为 Ubuntu 24.04 / Python 3.12.3；其他环境需要进一步验证。
+当前 27 项行为测试覆盖卡片修订与完整性、索引恢复、递归引用、天工模型结构检查，以及批量同步的幂等、断点恢复、坏行隔离、检索和连接分类。实际验证环境为 Ubuntu 24.04 / Python 3.12.3；其他环境需要进一步验证。
 
 - [命令与卡片格式](docs/catalog/catalog-cli.md)
 - [模块目录语义](docs/catalog/module-catalog.md)
@@ -64,6 +66,7 @@ python3 -m unittest discover -s tests -v
 - [天工复用边界](docs/catalog/tiangong-reuse.md)
 - [组内接入约定](docs/catalog/group-integration.md)
 - [天工原生模型只读检查](docs/catalog/tiangong-model-inspection.md)
+- [天工过程批量同步](docs/catalog/tiangong-batch-sync.md)
 
 ## 数据与外部工具
 

@@ -11,6 +11,7 @@ dependencies = []
 
 [project.scripts]
 htam-catalog = "htam_catalog.catalog:main"
+htam-tiangong-sync = "htam_catalog.tiangong_sync:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
