@@ -1,0 +1,56 @@
+{
+  "lifeCycleModelDataSet": {
+    "lifeCycleModelInformation": {
+      "dataSetInformation": {
+        "common:UUID": "00000000-0000-4000-8000-000000000100",
+        "name": {
+          "baseName": {
+            "@xml:lang": "en",
+            "#text": "Synthetic capability check"
+          }
+        }
+      },
+      "quantitativeReference": {
+        "referenceToReferenceProcess": "2"
+      },
+      "technology": {
+        "processes": {
+          "processInstance": [
+            {
+              "@dataSetInternalID": "1",
+              "@multiplicationFactor": "1",
+              "referenceToProcess": {
+                "@refObjectId": "00000000-0000-4000-8000-000000000001",
+                "@version": "00.00.001",
+                "@type": "process data set"
+              },
+              "connections": {
+                "outputExchange": {
+                  "@flowUUID": "00000000-0000-4000-8000-000000000011",
+                  "downstreamProcess": {
+                    "@id": "2",
+                    "@flowUUID": "00000000-0000-4000-8000-000000000011"
+                  }
+                }
+              }
+            },
+            {
+              "@dataSetInternalID": "2",
+              "@multiplicationFactor": "1",
+              "referenceToProcess": {
+                "@refObjectId": "00000000-0000-4000-8000-000000000002",
+                "@version": "00.00.001",
+                "@type": "process data set"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "administrativeInformation": {
+      "publicationAndOwnership": {
+        "common:dataSetVersion": "00.00.001"
+      }
+    }
+  }
+}

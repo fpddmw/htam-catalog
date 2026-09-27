@@ -33,8 +33,11 @@ python3 scripts/catalog.py --workspace outputs/process-catalog-demo expand demo-
 | `expand` | `MODULE [--revision N] [--representation ID] [--depth N] [--max-nodes N]` | 默认选第一种表达，按固定修订展开，返回实例路径、端口、连接、边界映射和未知项 |
 | `candidates` | `MODULE --port OUTPUT [--revision N]` | 寻找最新模块中的接收接口，返回匹配线索和逐项条件判断 |
 | `refresh` | `MODULE --file refresh.json --expect-revision N` | 更新来源提取层，保留本地补充，形成新修订并报告受影响及被本地覆盖的字段 |
+| `inspect-tiangong-model` | `--file model.json`；无需工作区 | 只读提取天工原生模型的实例、版本、倍率和连接，并返回结构诊断 |
 
 检索采用 Unicode 规范化后的子串匹配；查询文本按空白分词后取交集，功能、类别、输入和输出按指定字段过滤。当前覆盖名称、摘要、同义词、功能、类别、行业和接口术语。首次查询、索引缺失/损坏或卡片更新后会重建索引，所以 `search` 和 `candidates` 可能写入派生索引。
+
+天工模型读取的输入与范围见[原生模型检查](tiangong-model-inspection.md)。
 
 ## 卡片格式
 

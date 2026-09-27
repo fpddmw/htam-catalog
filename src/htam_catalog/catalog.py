@@ -524,12 +524,17 @@ def main(argv=None):
     for name in ("query", "function", "category", "input", "output"):
         p.add_argument("--" + name, default="")
     sub.add_parser("reindex")
+    p = sub.add_parser("inspect-tiangong-model")
+    p.add_argument("--file", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "validate":
             card = read_json(args.file); validate_card(card)
             result = {"module_id": card["module_id"], "revision": card["revision"], "valid": True,
                       "scope": "Card structure only; workspace references checked on save"}
+        elif args.command == "inspect-tiangong-model":
+            from .tiangong_model import inspect_tiangong_model
+            result = inspect_tiangong_model(read_json(args.file))
         else:
             require(args.workspace is not None, "--workspace is required", "WORKSPACE_REQUIRED")
             catalog = Catalog(args.workspace)
