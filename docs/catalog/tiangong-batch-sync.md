@@ -23,11 +23,12 @@ DB=outputs/tiangong-sync/catalog.sqlite
 python3 scripts/tiangong_sync.py --db "$DB" sync --kind flow --cli node "$CLI_JS" --page-size 100
 python3 scripts/tiangong_sync.py --db "$DB" sync --kind process --cli node "$CLI_JS" --page-size 100
 python3 scripts/tiangong_sync.py --db "$DB" status
+python3 scripts/tiangong_sync.py --db "$DB" failures
 python3 scripts/tiangong_sync.py --db "$DB" search '污泥'
 python3 scripts/tiangong_sync.py --db "$DB" matches --process-id PROCESS_UUID --version 00.00.001
 ```
 
-默认读取 `state_code=100`。可以重复传 `--state-code` 设置其它可访问状态。`--max-pages 1` 可先试一页；继续时添加 `--resume`，保持原页大小和状态筛选。正常重跑从第一页开始，通过 ID、版本和散列更新变化记录。单条错误保存至失败表，其他记录继续导入；整个分页命令失败时保留下一页的偏移供恢复。
+默认读取 `state_code=100`。可以重复传 `--state-code` 设置其它可访问状态。`--max-pages 1` 可先试一页；继续时添加 `--resume`，保持原页大小和状态筛选。正常重跑从第一页开始，通过 ID、版本和散列更新变化记录。单条错误保存至失败表，可用 `failures` 查看记录身份和原因，其他记录继续导入；整个分页命令失败时保留下一页的偏移供恢复。
 
 离线样本可以直接导入：
 

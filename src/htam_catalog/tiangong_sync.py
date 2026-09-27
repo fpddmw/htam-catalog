@@ -428,6 +428,8 @@ def main(argv=None):
     match_parser.add_argument("--process-id", required=True)
     match_parser.add_argument("--version", required=True)
     match_parser.add_argument("--limit", type=int, default=100)
+    failures_parser = sub.add_parser("failures", help="Inspect failed source records for retry")
+    failures_parser.add_argument("--limit", type=int, default=100)
     sub.add_parser("status", help="Show local projection counts and failed records")
     args = parser.parse_args(argv)
     try:
@@ -441,6 +443,9 @@ def main(argv=None):
                 result = search(db, args.term, args.limit)
             elif args.command == "matches":
                 result = matching_connections(db, args.process_id, args.version, args.limit)
+            elif args.command == "failures":
+                result = [dict(row) for row in db.execute("""SELECT kind,source_locator,reason,occurred_at
+                  FROM ingest_failures ORDER BY occurred_at DESC LIMIT ?""", (args.limit,))]
             else:
                 result = status_report(db)
         print(json.dumps(result, ensure_ascii=False, indent=2))
