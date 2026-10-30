@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "htam-catalog"
+version = "0.1.0"
+description = "Local recursive industrial-process catalog for HTAM"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+htam-catalog = "htam_catalog.catalog:main"
+htam-tiangong-sync = "htam_catalog.tiangong_sync:main"
+htam-tiangong-units = "htam_catalog.tiangong_units:main"
+htam-tiangong-draft = "htam_catalog.tiangong_draft:main"
+htam-tiangong-curation = "htam_catalog.tiangong_curation:main"
+htam-tiangong-whole = "htam_catalog.tiangong_whole:main"
+htam-tiangong-model-fetch = "htam_catalog.tiangong_model_fetch:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

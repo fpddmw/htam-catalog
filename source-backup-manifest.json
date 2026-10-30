@@ -1,0 +1,598 @@
+{
+  "schema": "htam.source-backup.v1",
+  "captured_date": "2026-10-30",
+  "source_git_base": "399412ceae84c410bf9aa89af5066f7583948233",
+  "source_state": "working-tree code; includes locally uncommitted implementation",
+  "scope": "Generic harness and catalog source, tests, packaging, and unchanged previously public examples/guides. Personal instructions, research-specific materials/code, live state and installation configuration stay at their original private locations.",
+  "copied_files": [
+    {
+      "path": "harness/__init__.py",
+      "sha256": "0e490bb73313d02a293c0ae4ef2e993b247a3a7f33280800fb8dd578b7182e13",
+      "bytes": 85
+    },
+    {
+      "path": "harness/adapters/__init__.py",
+      "sha256": "97c8a265e233e90b32439fa4c297d629e4688ca87d71a1c3fbfc834347a05037",
+      "bytes": 6895
+    },
+    {
+      "path": "harness/adapters/cli.mjs",
+      "sha256": "9d92138f815897da88036d25e160c7b1e8bac85857bea47068703cd117ca06c1",
+      "bytes": 4558
+    },
+    {
+      "path": "harness/adapters/codex.mjs",
+      "sha256": "ce6504bfdea09e5c4a80b7fc7d18a2aa75ade09df0aa42a7a7c2c5885e980f9e",
+      "bytes": 34471
+    },
+    {
+      "path": "harness/adapters/driver-cli.mjs",
+      "sha256": "70a6e4e2d1c81e8fe1a83b40bac7848f2a2aa6a97afae9010c1a1bf8d7434a6c",
+      "bytes": 2436
+    },
+    {
+      "path": "harness/adapters/driver.mjs",
+      "sha256": "bf0adca36c40faee6aa56479b1cef65997ba37a3d6ac89e1d22f8fd8c27a58f4",
+      "bytes": 42329
+    },
+    {
+      "path": "harness/adapters/events.mjs",
+      "sha256": "f7db554c8179176f46bf38f8a04ca4e066be19d0143e1627c669f04539bdb974",
+      "bytes": 6549
+    },
+    {
+      "path": "harness/adapters/profiled.mjs",
+      "sha256": "407828041bf3dbb77fc30b82d94e42488739570386ef11ec71c0702ae71de1b1",
+      "bytes": 8999
+    },
+    {
+      "path": "harness/adapters/timeline.mjs",
+      "sha256": "591a02144260adfc7b8c29ba1b6679c1fb986928e5cd3959b362e2b44d677129",
+      "bytes": 17752
+    },
+    {
+      "path": "harness/adapters/transport.mjs",
+      "sha256": "e4fd928c1c5168d8b76923b7a6e209ecf896794939cfcc5923bcf9df1945359f",
+      "bytes": 15024
+    },
+    {
+      "path": "harness/assets.py",
+      "sha256": "02d89f74c4a5995173be2bb9e036ff33f82c77e7151e26116c5f23ae44252ab1",
+      "bytes": 49728
+    },
+    {
+      "path": "harness/cli.py",
+      "sha256": "fb14144712e592e2de9a6b1801d6c1648ac29b4d5246729381f017e1583b90b1",
+      "bytes": 42071
+    },
+    {
+      "path": "harness/common.py",
+      "sha256": "9e96666fd1d61ff6f10324d53ad693a982634b789c3fb69fcee50f9efd0dcbff",
+      "bytes": 3409
+    },
+    {
+      "path": "harness/context.py",
+      "sha256": "e0f2511e2c1f466cb83c8e8a8f0d5ec5c090355f518b7aa457a2acaf3a303f17",
+      "bytes": 48673
+    },
+    {
+      "path": "harness/coordination.py",
+      "sha256": "201330335bb71dfba38f080039a2ccb1f7e9a3ed098e29063dfe2e19e3ea6c6a",
+      "bytes": 36911
+    },
+    {
+      "path": "harness/discovery.py",
+      "sha256": "70ab8c6d1cb17a3813d28b0969482d5587bef79d6689ab716d2688a648b41799",
+      "bytes": 42068
+    },
+    {
+      "path": "harness/dot_package.py",
+      "sha256": "3a1c92d2a9c43d2a872507730efd014eebac87b053762fdff3392c677045e792",
+      "bytes": 19511
+    },
+    {
+      "path": "harness/experiences.py",
+      "sha256": "ccc1fa75fe46597dc389678437974fcd9c11736bb31cdb52f4baeade26fe7e00",
+      "bytes": 44330
+    },
+    {
+      "path": "harness/experiments/__init__.py",
+      "sha256": "46435d223614e393d0459f85a5d81022afca1379f2636d6f5e6ccb40ab441f04",
+      "bytes": 239
+    },
+    {
+      "path": "harness/experiments/construction.py",
+      "sha256": "261c1ed6984b08a9e4bb31f834f02239721a7338212d0aba492432a1ff5de9d7",
+      "bytes": 32593
+    },
+    {
+      "path": "harness/experiments/contracts.py",
+      "sha256": "fa2c023c37e9c25822bdbd63b24f5135587abddfb9ff1f87963da15a57e4a14a",
+      "bytes": 20264
+    },
+    {
+      "path": "harness/experiments/evaluation.py",
+      "sha256": "5bf7a31778330199fb4b6691c267630de2b20eddd2f45890b2d688aa13f763da",
+      "bytes": 18697
+    },
+    {
+      "path": "harness/experiments/execution.py",
+      "sha256": "28e13a255a6b15621c4ae1c209e39e55a035c2496b66a2edf01947d5806e959e",
+      "bytes": 33205
+    },
+    {
+      "path": "harness/experiments/generation.py",
+      "sha256": "7ae5393cae050cccc377cea23873f5e30f3f8f9fbcde047ce8cb5f77f3dd3e17",
+      "bytes": 13945
+    },
+    {
+      "path": "harness/experiments/isolation/__init__.py",
+      "sha256": "d33ec8ecf580f28f4a15038928d04c9fea8e94019184a14c3628702a210846d7",
+      "bytes": 53
+    },
+    {
+      "path": "harness/experiments/isolation/inside.py",
+      "sha256": "7d97e4e726ef63f5838367b177e12f8f558f8b35930f667bd53726493ffedbd0",
+      "bytes": 6757
+    },
+    {
+      "path": "harness/experiments/isolation/launcher.py",
+      "sha256": "632ce1030e674b58f92ec1ac08f9c528d1f012965d5f3388097463812e91002d",
+      "bytes": 13848
+    },
+    {
+      "path": "harness/experiments/journal.py",
+      "sha256": "a4a8a31565937b7706595004c1ad71f03f6c15b94d46f49ee053831979686c1d",
+      "bytes": 9058
+    },
+    {
+      "path": "harness/experiments/lab.py",
+      "sha256": "b514d54c0c1b8f436c31c6c5fb87739a23689399b07f6373b1d4fb647ab9a43c",
+      "bytes": 8233
+    },
+    {
+      "path": "harness/experiments/meta.py",
+      "sha256": "b84a5fadfe4dc46929f2393df17c01bbe59bc37ad8d1f5f429f31dd6067d9afa",
+      "bytes": 5859
+    },
+    {
+      "path": "harness/experiments/native_artifacts.py",
+      "sha256": "e1a31726082f5e45a135112464dc6230dc3526230ce1d3a615b7f8073c9a2f91",
+      "bytes": 18784
+    },
+    {
+      "path": "harness/experiments/native_runner.mjs",
+      "sha256": "2c617e1153080962e34887f51b454ee5b2763fe22be2b5f7f69da9db4be4f183",
+      "bytes": 37658
+    },
+    {
+      "path": "harness/experiments/native_subscription.py",
+      "sha256": "db0f528d7f59ab1bc808fbd4db2686d4c912cbfc04cc4f78b358563808d9102e",
+      "bytes": 29342
+    },
+    {
+      "path": "harness/experiments/publishing.py",
+      "sha256": "576521a9d056aad02f0c15797a2c4d565f0b7eadd2082efa13e02004a9d50f62",
+      "bytes": 21544
+    },
+    {
+      "path": "harness/fulfillment.py",
+      "sha256": "da9032e43554e624bef59b01e4593fbda79a1d3925e2a749fe11ad777f7275a6",
+      "bytes": 19886
+    },
+    {
+      "path": "harness/goals.py",
+      "sha256": "25e3b3c34cdd036e9703518a604ac038077a539bf669d882be2304055a54f658",
+      "bytes": 25937
+    },
+    {
+      "path": "harness/host.py",
+      "sha256": "003e4edc18906c173e49ce5dbf5b5535350e35be861b36bbfb1cc30a90251f62",
+      "bytes": 41443
+    },
+    {
+      "path": "harness/improvements.py",
+      "sha256": "2b713ee62e7461b0254a5629d438bce65a61fda0caf8302d1daf8fc32d67c2d8",
+      "bytes": 19580
+    },
+    {
+      "path": "harness/main_messages.py",
+      "sha256": "30c37454935113fe5c0c586842d627b308cda4062ac9927433149e9a50a9c9ff",
+      "bytes": 1270
+    },
+    {
+      "path": "harness/migrations/__init__.py",
+      "sha256": "b11ff0bd43475242ab15e2a0aeae78d96fa61c7496e2d1a9bf900d763a375aa6",
+      "bytes": 21013
+    },
+    {
+      "path": "harness/native_entry.py",
+      "sha256": "e2fc5b36f9dd0ad6bd8f7da3c98fa190a31d6da8d7c1256cc18d839bce58ea35",
+      "bytes": 66451
+    },
+    {
+      "path": "harness/native_inputs.py",
+      "sha256": "ef045c063f7a4808e9a2f2df24b5ad88428b6d3a36e866834e60db237eb15ce2",
+      "bytes": 24447
+    },
+    {
+      "path": "harness/portfolio.py",
+      "sha256": "3de778b09b51271f3c2a818326bd6a212a3154ba7870dc5def6f1f2b49479a24",
+      "bytes": 8518
+    },
+    {
+      "path": "harness/release.py",
+      "sha256": "f8b4a3175986a79e08890e0aa12e3fd64522740cb534a19a8f0ca0ea39adf2fe",
+      "bytes": 8282
+    },
+    {
+      "path": "harness/runtime.py",
+      "sha256": "cccb23e1fdb94ffdd710b890ab374c6cfae6cfc8757d04b236fd0e59ca6abb5f",
+      "bytes": 93792
+    },
+    {
+      "path": "harness/runtime_bridge.mjs",
+      "sha256": "1f57e901fa3c1113ae0b61e4734ca7382c16fbbe7b9504e8bef0d7eaf8dd7df2",
+      "bytes": 2932
+    },
+    {
+      "path": "harness/state.py",
+      "sha256": "b703860f9a95623269b8bb394aa7c044a32e0ec2c594f9c112ebf0820cc8e81f",
+      "bytes": 84061
+    },
+    {
+      "path": "harness/submission.py",
+      "sha256": "a3da232a738907c342946bd1b0b8c2d23191ba9027e83414711d1a4f960180bd",
+      "bytes": 15303
+    },
+    {
+      "path": "harness/sync-review-reminder.ps1",
+      "sha256": "76398dab746efeea62fbaff7c75ca8f879c502c6bfc61061079a4fc513c20013",
+      "bytes": 1395
+    },
+    {
+      "path": "harness/tiangong_payload.mjs",
+      "sha256": "8b071561e5dd0bd2c1ded260ac08eab0366ceae8dc4724614b3067594393c68b",
+      "bytes": 500
+    },
+    {
+      "path": "scripts/harness.py",
+      "sha256": "bbc8dc0e986ec9737aa6b763314889b0e896e062c21673723818e01c54d6ef62",
+      "bytes": 280
+    },
+    {
+      "path": "scripts/harness_release.py",
+      "sha256": "73824c305aec9d1e932aebeddc6bb6ac33987c7c1cc23e38d16a829326291783",
+      "bytes": 2296
+    },
+    {
+      "path": "scripts/tiangong_resources.py",
+      "sha256": "fdec22879de7a0838ce09359c5963b3c02afd8474e00740a93d5becc0adf22e0",
+      "bytes": 9897
+    },
+    {
+      "path": "tests/harness/test_assets.py",
+      "sha256": "2316c5cd906f6112930cceed14b48941ad5a194e5cdea707edc12334b920f40d",
+      "bytes": 19082
+    },
+    {
+      "path": "tests/harness/test_capability_discovery.py",
+      "sha256": "a428a0d9232d03b84c324367921916cc86281b90f0eba62804299e53dd95352f",
+      "bytes": 14321
+    },
+    {
+      "path": "tests/harness/test_coordination_message.py",
+      "sha256": "63095bbc412e36fcb5e55f747614df58f156a92550979dea0a2555b85fd333e5",
+      "bytes": 32352
+    },
+    {
+      "path": "tests/harness/test_current_state_compaction.py",
+      "sha256": "d413633688260f140e1fafa4b499a2c31000de89df85b6fc7e8273c11f7fefc2",
+      "bytes": 16874
+    },
+    {
+      "path": "tests/harness/test_dot_package.py",
+      "sha256": "94076e3ad9745d7828055193e8b688a8f3511e79e2c19f9055290c2f586f39e1",
+      "bytes": 10889
+    },
+    {
+      "path": "tests/harness/test_fulfillment.py",
+      "sha256": "61a784d1effd4d489a62e41144ebce493ee9e228cae5e29ea8fb75ae022c0f8a",
+      "bytes": 11555
+    },
+    {
+      "path": "tests/harness/test_goal_continuation.py",
+      "sha256": "0f1cd99a617fa7cd589d595319ab3c8e8c452360c69722941c1a2e6fead38dd8",
+      "bytes": 20430
+    },
+    {
+      "path": "tests/harness/test_improvement_assignment.py",
+      "sha256": "a7f7fa19a967eb775bf1f01104f48a69a3087c05fac1756e9bbac8f64f832965",
+      "bytes": 21985
+    },
+    {
+      "path": "tests/harness/test_knowledge_method_reuse.py",
+      "sha256": "d0b108249724b5ad8664c1a3fa89d0ce763fea33db8efb10191af34e0b02dbf8",
+      "bytes": 19946
+    },
+    {
+      "path": "tests/harness/test_local_coordination.py",
+      "sha256": "eae9058e30ebda65f6de3c19dbc986729d39c1a56a4e9de6061cfdde7673d7c1",
+      "bytes": 49659
+    },
+    {
+      "path": "tests/harness/test_main_messages.py",
+      "sha256": "43c29bf509765169919cdcf9e5e7331e7828db2c0ccfd23ff8546dc91df0eddd",
+      "bytes": 11788
+    },
+    {
+      "path": "tests/harness/test_manager.py",
+      "sha256": "bbb6f599fe970d9b9f7918ea608309d3b50feba8432d6f6046f42fbf83aafb4d",
+      "bytes": 18339
+    },
+    {
+      "path": "tests/harness/test_native_entry.py",
+      "sha256": "fad1a03715802355845978a38437da71df47d2797c05288e3f279affacfa1121",
+      "bytes": 28540
+    },
+    {
+      "path": "tests/harness/test_native_review_identity.py",
+      "sha256": "c05c44540aeecb0a911eb5a453da91c7f91cf72a8818ff944be721dcac443de4",
+      "bytes": 11802
+    },
+    {
+      "path": "tests/harness/test_portfolio.py",
+      "sha256": "2953e7750f4cbfa2bde5dde74e870e9bd20e88019a334672c0d0837669568b34",
+      "bytes": 10455
+    },
+    {
+      "path": "tests/harness/test_submission.py",
+      "sha256": "532612334e02500f7264a4ca5601d5c93f3dc9e01fc1587730edd664f9333603",
+      "bytes": 6468
+    },
+    {
+      "path": "tests/harness/test_systemic.py",
+      "sha256": "2f01ff5803ba0d772d1c5d224072968e759361c4b7ebeec68122b5bc8c399399",
+      "bytes": 24179
+    },
+    {
+      "path": "tests/harness/test_task_findings.py",
+      "sha256": "f6df1d5e174a3984cdc056d83e0c68d23e22f0dc6169924d7d3d90ac64a6bd52",
+      "bytes": 20799
+    },
+    {
+      "path": "workspaces/industrial-reorganization/docs/catalog/dependencies.observed.json",
+      "sha256": "d976f69379d17df2c4c18bcfc9012fea5a15562dc54b545638ca0cb0700310ff",
+      "bytes": 1902
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-blender.json",
+      "sha256": "1681b492d966f84e1065d782a04263d946efd86c96a331ae4fddf45a70470b0d",
+      "bytes": 1517
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-conditioning.json",
+      "sha256": "3f8c2aef9af0bbc7d1c06073e7ab168e4e8b11740a4610b21af55098489dfa1d",
+      "bytes": 2838
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-dryer.json",
+      "sha256": "84ec02c94b5618577f808064187c83ed5bab60404f12d1f6562ed54cee61104a",
+      "bytes": 1918
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-heat-recovery.json",
+      "sha256": "4c26f0b46b4c36026b1dc1919844e9b5b5acbf311b06b2ac84b2ce090a18610a",
+      "bytes": 1388
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-line.json",
+      "sha256": "fdfe32916a350eec2f4f3e1aa00a1c9ec5fd7f6195bdc20347dcf36e915f54ba",
+      "bytes": 2293
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-press.json",
+      "sha256": "61088c1c339fef8d04e18de09317b076c2923b257152bb2f2504e47b1db146a3",
+      "bytes": 1665
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-sensitive-receiver.json",
+      "sha256": "dc7b48c80ac82f849dca3f78a1c6d099aef689a4d628973ae8b679ff1ab6eeb9",
+      "bytes": 1308
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/demo-unknown-receiver.json",
+      "sha256": "29c15010df93687136075b4e0da108a5f1d4301b08fd54db6ec80411d439aad3",
+      "bytes": 1365
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/catalog/tiangong-clinker-public-summary.json",
+      "sha256": "a2dccc357c43de7f0d25a5f3cf051f814ee53ef1f8979d0b527c5d8d6f46f37a",
+      "bytes": 2018
+    },
+    {
+      "path": "workspaces/industrial-reorganization/examples/tiangong/synthetic-lifecyclemodel.json",
+      "sha256": "f23aa31f75700e957ccb11d4f88ce47d031ca131fd29e3940331c9f447645388",
+      "bytes": 1633
+    },
+    {
+      "path": "workspaces/industrial-reorganization/pyproject.toml",
+      "sha256": "2d667482a6d198952e15a3963a4d553baa15c1fe51e2d56fee3a6d4d1e616f53",
+      "bytes": 718
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/catalog.py",
+      "sha256": "a942ee7e09ad881d9ae238d765a162273424b369b3766e11a8a4dc3be62d0d77",
+      "bytes": 294
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/demo_catalog.py",
+      "sha256": "67decf2c7c171b26dcd2cf8a6aef96ea00de60bd81cc88bd121620fd9b0e9512",
+      "bytes": 2433
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_cards.py",
+      "sha256": "ed161b674fd5f617151b903691ba207c4a225059ff10d22c472e620704ce044b",
+      "bytes": 328
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_curation.py",
+      "sha256": "371721403bbcdaa2785be7f54c55992ddd8320a1517306fa5c540f6ec8df907a",
+      "bytes": 298
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_draft.py",
+      "sha256": "69a4fba578520df8149094f1142611d4b996b133aebf354f0d74ecd63a3ec45c",
+      "bytes": 327
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_model_fetch.py",
+      "sha256": "a180c57a6d1b1e7829855e14699bf8ae834f713203ef95a632e4a8a06e2245dc",
+      "bytes": 316
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_sync.py",
+      "sha256": "e8f439750a0877f3e471288316f940839b9d1869197cb4aa94ca432af521036d",
+      "bytes": 315
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_units.py",
+      "sha256": "353ef560eeef4d6346607f3158fa8e60cffbcba2337026a71c4754ca2582e11a",
+      "bytes": 317
+    },
+    {
+      "path": "workspaces/industrial-reorganization/scripts/tiangong_whole.py",
+      "sha256": "b0a67cfa4dd8b5efd0e002af222f3bb7a4befbce131596bda061f32dde6da63b",
+      "bytes": 294
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/__init__.py",
+      "sha256": "5a50bc2dc8e0d67ee88472970489caed94539d25d82bfe61eba5d95022a968dc",
+      "bytes": 164
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/__main__.py",
+      "sha256": "a9a2aafa2697160e59a6f421d8a956bb02558c959c62ade5fd7880b5a1ca9f62",
+      "bytes": 52
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/catalog.py",
+      "sha256": "64c04200977b9854a8b0d7a48cbb5e8fb7dd84571a730c3c17e843e223b6ce58",
+      "bytes": 45652
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/fragments.py",
+      "sha256": "c0c468ce095f5eff99688d5ab8e147dbb117bab3edace3bd81db4bfd052e4706",
+      "bytes": 3629
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/locations.py",
+      "sha256": "e8691f4c7e28fbbbad061d645506e417fc0ba539ed50a9a21d9dff1f2f548d9f",
+      "bytes": 3127
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/selections.py",
+      "sha256": "25504f1145172bfd3642e88044af0ba7b02be086921950133387ecc20a92bf44",
+      "bytes": 10891
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_cards.py",
+      "sha256": "d97b05377c8b4c122a25796d285f1c7bc32b9008110dfb2a3ee36500912f3b8d",
+      "bytes": 10613
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_curation.py",
+      "sha256": "7dd89dbd8b3f89441e740bdc7e7cdf2e5f3798c8aebe0cfcf9c15e7c5b9b2bda",
+      "bytes": 24135
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_draft.py",
+      "sha256": "71d0a1233093d324468d3da07f8b82b4ceee0fd1759e146740cc0ee30fba7ad8",
+      "bytes": 8228
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_model.py",
+      "sha256": "004e4386be5bfc87cd1c8b7a1a0968083722acdbdd6bdc38386e9d187ea3ed2e",
+      "bytes": 8240
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_model_fetch.py",
+      "sha256": "f4e7aa075202d58de42ed76255862233014f23924895d935d2c7146545e903c0",
+      "bytes": 11539
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_sync.py",
+      "sha256": "0352d6f79133c16c7c5d931190d5855788f5882176d02a1c38b13d1f0637660c",
+      "bytes": 55794
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_units.py",
+      "sha256": "b9b1d4d36d2ecdb01705d94945e0d545fc93f5c0dc4ff642d24a24cf26620515",
+      "bytes": 11437
+    },
+    {
+      "path": "workspaces/industrial-reorganization/src/htam_catalog/tiangong_whole.py",
+      "sha256": "deedd0f55ecfda4d69fb6fa73fd35b022438a8d45f871b363fe6e0de3e0965b5",
+      "bytes": 10399
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_catalog.py",
+      "sha256": "b8f855ed6a7467dbbad94bd90a07326f7f67f4f5ffb48b35407180ade758db83",
+      "bytes": 31113
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_cards.py",
+      "sha256": "7312974c0783cc574a34cb2a4f0a10050faac499f2566bec5cbc76d239d2d9ce",
+      "bytes": 7158
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_curation.py",
+      "sha256": "8da1720ea5a78a4012893304730e837577523875fb4cb9f0323af134d3c0484f",
+      "bytes": 13777
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_draft.py",
+      "sha256": "d935dea84d47ab887dabc54f9f16b61a739d5c60fffbed20451015b4c901bebf",
+      "bytes": 9503
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_model.py",
+      "sha256": "8a17c6a36a63afae39ca808fa5ffc5a700fbddde25024484bf8065d2852b943a",
+      "bytes": 5609
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_model_fetch.py",
+      "sha256": "c6aa8c7c843775063d83107526273e29afd26661e4360fd9a51dc883f97aeace",
+      "bytes": 8384
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_sync.py",
+      "sha256": "7cbcaca46d181b681f5071f7d3351cbc5e787c3e2182ab684a060557b4d6387c",
+      "bytes": 26342
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_units.py",
+      "sha256": "510c5d06b689a5ba82ae04f55f7b20301562e395c6522084a1363a6afcebd190",
+      "bytes": 7761
+    },
+    {
+      "path": "workspaces/industrial-reorganization/tests/test_tiangong_whole.py",
+      "sha256": "bf5e09c50a195407d56b26b68dbbc02afec6ae2bfe9acae66c7e11b1ef079678",
+      "bytes": 5138
+    }
+  ],
+  "copied_file_count": 115,
+  "copied_total_bytes": 1836794,
+  "historical_public_guides": [
+    "docs/catalog/catalog-cli.md",
+    "docs/catalog/execution-boundary.md",
+    "docs/catalog/group-integration.md",
+    "docs/catalog/implementation-plan.md",
+    "docs/catalog/model-contract.md",
+    "docs/catalog/module-catalog.md",
+    "docs/catalog/tiangong-batch-sync.md",
+    "docs/catalog/tiangong-model-inspection.md",
+    "docs/catalog/tiangong-reuse.md"
+  ],
+  "source_content_sha256": "80f3c6cddc4993bf633627c1bdc9b3fd88f3d3ab514474090bb05f46bc1609fa"
+}

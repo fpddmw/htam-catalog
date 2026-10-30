@@ -1,75 +1,40 @@
-# HTAM Catalog · 递归工艺模块目录
+# HTAM 源码备份（2026-10-30）
 
-用于工业过程与潜在重组路径探索的本地基础设施。模块保存工艺功能、输入输出接口、条件与来源，也可以包含其他模块；详细 LCA 清单通过外部引用按需关联。
+本分支保存转用 data-workspace 前的 HTAM 通用源码。它从 GitHub 原 main 的 `399412ceae84c410bf9aa89af5066f7583948233` 建立，纳入当时本地尚未提交的实现；原 main 和正在使用的本地工作目录保持原状。
 
-项目采用普通 Python 结构，核心代码仅依赖标准库。本地导入和检索可离线运行；在线同步通过已登录的天工 CLI 只读访问数据库。
+## 保存范围
 
-**当前建设重点是批量数据流水线**：从可访问的天工过程和流记录自动提取工艺信息，持续同步、建立索引，并提供可追溯的查询与潜在连接匹配。第一版已支持天工 CLI 只读分页、离线导入、增量更新、断点恢复和本地检索，且已用真实账号验证已发布过程及其引用流的批量读取。使用方法见[批量同步](docs/catalog/tiangong-batch-sync.md)，阶段安排见[建设计划](docs/catalog/implementation-plan.md)。
+- `harness/`、`scripts/`：管理核心、原生会话适配、知识与资产、反馈维护、发布打包等程序。
+- `tests/harness/`：管理核心现有测试。
+- `workspaces/industrial-reorganization/`：已迁址的目录工具源码、通用脚本、测试、打包配置及原已公开示例。
+- `docs/catalog-baseline/`：已公开的原版本使用说明，只保留其历史字节，不作为当前研究状态。
+- `source-backup-manifest.json`：115 个原样复制文件的逐项 SHA-256、大小及来源版本，标明这是本地工作树源码快照。
 
-## 已有功能
+个人指引、Wiki、科研配置、专属研究代码和材料、管理数据库、原生任务状态、凭据、安装目录与运行记录继续保存在各自原位置。这是通用源码备份，不是完整研究环境或运行数据备份。原 `harness/scopes.json` 及操作手册包含私有研究上下文，未公开；可参考无业务内容的 `harness/scopes.example.json`。
 
-- JSON 工艺卡片校验、保存、读取与不可变修订历史。
-- 来源提取与本地补充分层；来源刷新保留本地补充并报告变化。
-- 功能、类别、输入输出等字段检索与可重建索引。
-- 固定子模块修订及表达的递归展开、实例路径、边界映射与包含环诊断。
-- 接口候选检索及已声明标量条件检查，返回满足、不满足或未知。
-- 天工原生生命周期模型 JSON 的只读结构检查，提取过程实例、版本、倍率和连接。
-- 天工过程与流的批量同步、工艺字段投影、SQLite 索引、来源与失败记录、初步流身份连接查询。
+## 检查入口
 
-当前参数可作为数据记录；参数公式求值、完整方案编辑、自动多步重组和在线 LCA 计算仍待开发。候选结果的适用范围取决于已记录的条件与来源。
-
-## 快速使用
-
-需要 Python 3.10 或以上。在项目根目录运行，演示使用一个新的空工作区：
+在本分支根目录运行管理核心测试：
 
 ```sh
-python3 scripts/demo_catalog.py --workspace outputs/process-catalog-demo
-python3 scripts/catalog.py --workspace outputs/process-catalog-demo search --function 接收 --input 矿物固体
-python3 scripts/catalog.py --workspace outputs/process-catalog-demo candidates demo-dryer --port product
-python3 scripts/catalog.py --workspace outputs/process-catalog-demo expand demo-line
-python3 scripts/catalog.py inspect-tiangong-model --file examples/tiangong/synthetic-lifecyclemodel.json
+python3 -m unittest discover -s tests/harness -p 'test_*.py'
+python3 scripts/harness.py --help
 ```
 
-演示导入 9 张卡片并生成 JSON 报告。其中 8 张为构造样例，1 张为天工公开过程身份与名称摘要；这些样例用于验证软件行为，尚未构成真实工艺可行性或环境收益验证。
-
-`--workspace` 显式指定数据位置，可以使用项目内或外部路径。实际工作区与派生索引保存在本地，详细数据不会自动从天工下载。
-
-## 项目结构
-
-```text
-src/htam_catalog/       核心实现与 Python API
-scripts/catalog.py     从源码直接运行的命令入口
-scripts/demo_catalog.py 样例导入与演示
-scripts/tiangong_sync.py 天工批量同步与检索
-examples/catalog/      带来源和证据状态的样例卡片
-examples/tiangong/     原生模型结构的构造样例
-tests/                 行为测试
-docs/catalog/          格式、设计、天工复用与开发计划
-pyproject.toml         Python 包元数据
-```
-
-源码入口无需安装包。Python 调用方可从 `htam_catalog` 导入 `Catalog`；源码开发时将 `src` 加入模块搜索路径。包元数据也声明了 `htam-catalog` 命令入口。
-
-## 测试与文档
+目录工具从其现有子目录运行：
 
 ```sh
-python3 -m unittest discover -s tests -v
+cd workspaces/industrial-reorganization
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 scripts/catalog.py --help
 ```
 
-当前 31 项行为测试覆盖卡片修订与完整性、索引恢复、递归引用、天工模型结构检查，以及批量同步的幂等、断点恢复、坏行隔离、按引用补流、失败重试、格式迁移、检索和连接分类。实际验证环境为 Ubuntu 24.04 / Python 3.12.3；其他环境需要进一步验证。
+Python 与原生宿主适配分别验证；部分测试需要 Node.js。测试使用临时目录和测试夹具，不证明真实宿主、研究任务或线上工具已接通。
 
-- [命令与卡片格式](docs/catalog/catalog-cli.md)
-- [模块目录语义](docs/catalog/module-catalog.md)
-- [递归模型设计](docs/catalog/model-contract.md)
-- [AI 与程序的执行分工](docs/catalog/execution-boundary.md)
-- [建设计划](docs/catalog/implementation-plan.md)
-- [天工复用边界](docs/catalog/tiangong-reuse.md)
-- [组内接入约定](docs/catalog/group-integration.md)
-- [天工原生模型只读检查](docs/catalog/tiangong-model-inspection.md)
-- [天工过程批量同步](docs/catalog/tiangong-batch-sync.md)
+本快照验证：管理核心 305 项、目录工具 87 项测试全部通过；115 个复制文件与本地源文件逐项哈希一致。提交共 129 个文件，包含必要的备份说明和原已公开历史指引，通过范围、语法、敏感内容及 Git 差异检查。
 
-## 数据与外部工具
+## 后续接续
 
-本地目录保存工艺摘要、接口和引导字段；批量同步复用天工 CLI 的过程与流读取入口，详细清单与模型仍通过天工来源关联。依赖版本、已核验范围和在线同步结果见[批量同步文档](docs/catalog/tiangong-batch-sync.md)。
+用户已确定后续工作转用独立的 data-workspace。该实现确认版本为 `036eb94a4d854bc598c8cdce765daec42adf77d5`，包含老师最新代码及完整任务改造、审阅修复；它与本分支保有各自的 Git 历史。
 
-本仓库仅发布代码、样例和开发文档。研究原始资料、完整数据库、运行工作区和历史归档在本地维护。公开过程摘要保留原始页面引用；第三方资料的权利与使用条件沿用来源。本项目目前尚未指定开源许可证。
+HTAM 原科研资产、管理状态和在途工作仍由原工作区保管。后续按具体用途引用原件、核对责任及运行环境，再接入 data-workspace。本分支没有迁移管理库、恢复旧任务、启用自动化或变更生产部署。

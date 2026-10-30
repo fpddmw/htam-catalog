@@ -1,0 +1,24 @@
+{
+  "roots": [
+    "README.md",
+    "harness",
+    "scripts",
+    "workspaces/industrial-reorganization/src"
+  ],
+  "exclude": [
+    ".git",
+    ".venv",
+    "node_modules",
+    "__pycache__",
+    ".harness-local",
+    ".state",
+    ".foundry",
+    ".env",
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "*credentials*",
+    "auth.json"
+  ],
+  "entrypoints": []
+}
